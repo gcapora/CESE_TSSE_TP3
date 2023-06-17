@@ -9,10 +9,11 @@
 
 /* Tipos privados ------------------------------------------------------------*/
 typedef struct {
-    gpio_t       pinLed;
+    gpio_t       pinLed;        // identificador de pin en upuerto_HAL.h
     bool         inicializado;
-    estadoLed_t  estado;
-    modoLed_t    modo;
+    estadoLed_t  estado;        // estado lógico del led: encendido en algún modo o apagado
+    estadoLed_t  estadoFisico;  // estado físico del gpio en un momento determinado
+    modoLed_t    modo;          
     uint16_t     nEncendido;
     uint16_t     nApagado;
     uint16_t     nActual;
@@ -83,6 +84,7 @@ idLed_t uLedInicializar(gpio_t pin_led) {
     // Reseteamos valores
     vectorLedControl[IdLed].pinLed = pin_led;
     vectorLedControl[IdLed].estado = LED_APAGADO;
+    vectorLedControl[IdLed].estadoFisico = LED_APAGADO;
     vectorLedControl[IdLed].modo = PREDETERMINADO;
     vectorLedControl[IdLed].nActual = 0;
     vectorLedControl[IdLed].nEncendido = CiclosEncendidos[vectorLedControl[IdLed].modo];
@@ -139,6 +141,7 @@ bool uLedActualizar(idLed_t led_id) {
     }
 
     gpioEscribir (vectorLedControl[led_id].pinLed, salida);
+    vectorLedControl[led_id].estadoFisico = salida; // Esto en verdad duplica a gpioEscribir
     vectorLedControl[led_id].nActual++;
     if ( vectorLedControl[led_id].nActual >= 
         (vectorLedControl[led_id].nEncendido + vectorLedControl[led_id].nApagado) ) {
@@ -190,4 +193,14 @@ bool uLedDesinicializar(idLed_t led_id) {
     if ( false == uLedVerificarId(led_id) ) return false;
     vectorLedControl[led_id].inicializado =false;
     return true;
+}
+
+/*******************************************************************************
+* @brief   
+* @param   
+* @retval
+*******************************************************************************/
+bool uLedObtenerEstadoFisico(idLed_t led_id) {
+    if ( false == uLedVerificarId(led_id) ) return false;
+    return vectorLedControl[led_id].estadoFisico;
 }

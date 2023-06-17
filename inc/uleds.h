@@ -49,6 +49,7 @@ bool uLedApagar(idLed_t led_id);
 bool uLedActualizar(idLed_t led_id);
 bool uLedConfigurarModo(idLed_t led_id, modoLed_t led_modo);
 bool uLedObtenerEstado(idLed_t led_id);
+bool uLedObtenerEstadoFisico(idLed_t led_id);
 modoLed_t uLedObtenerModo(idLed_t led_id);
 bool uLedDesinicializar(idLed_t led_id);
 
